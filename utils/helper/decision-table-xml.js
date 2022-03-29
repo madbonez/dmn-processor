@@ -2,7 +2,7 @@
 *  ©2017-2018 HBT Hamburger Berater Team GmbH
 *  All Rights Reserved.
 */
-const DmnModdle = require('dmn-moddle');
+const DmnModdle = require('dmn-moddle/dist/index.js');
 const logger = require('loglevel').getLogger('dmn-eval-js');
 const moment = require('moment');
 const feel = require('../../dist/feel');
