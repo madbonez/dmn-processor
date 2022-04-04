@@ -6,3 +6,6 @@ gulpfile.js
 /utils/dev/*
 dummy.js
 node_modules
+/utils/*
+/dist
+/src

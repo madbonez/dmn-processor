@@ -96,10 +96,11 @@ function DecimalNumberNode(integer, decimal, loc) {
   this.loc = loc;
 }
 
-function FunctionInvocationNode(fnName, params, loc) {
+function FunctionInvocationNode(fnName, params, resultAccessor, loc) {
   this.type = 'FunctionInvocation';
   this.fnName = fnName;
   this.params = params;
+  this.resultAccessor = resultAccessor;
   this.loc = loc;
 }
 

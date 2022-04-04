@@ -115,13 +115,12 @@ const append = (list, element) => {
   }
 };
 
-const concatenate = (...args) =>
-  args.reduce((result, next) => {
-    if (Array.isArray(next)) {
-      return Array.prototype.concat(result, next);
-    }
-    return result;
-  }, []);
+const concatenate = (...args) => args.reduce((result, next) => {
+  if (Array.isArray(next)) {
+    return Array.prototype.concat(result, next);
+  }
+  return result;
+}, []);
 
 const insertBefore = (list, position, newItem) => {
   if (list === undefined || list === null) {
@@ -220,6 +219,16 @@ const flatten = (...args) => {
   return _.flattenDeep(array);
 };
 
+// const flatten = (...args) => {
+//   // remove context from args array (last element)
+//   const array = [].concat(args);
+//   array.splice(array.length - 1, 1);
+//   if (array.length === 1 && (array[0] === null || array[0] === undefined)) {
+//     return array[0];
+//   }
+//   return _.flattenDeep(array);
+// };
+
 module.exports = {
   'list contains': listContains,
   count,
@@ -239,3 +248,6 @@ module.exports = {
   'distinct values': distinctValues,
   flatten,
 };
+
+// some x in flatten(list.fieldInObject).abc satisfies contains(x, element)
+// list contains(flatten(list.fieldInObject).abc, element)

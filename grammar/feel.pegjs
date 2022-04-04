@@ -371,10 +371,16 @@ ComparisonOperator
     / ">="
 
 FunctionInvocation
-    = fnName:QualifiedName __ "(" params:(__ (PositionalParameters))? __ ")"
+    = fnName:QualifiedName __ "(" params:(__ (PositionalParameters))? __ ")" resultAccessorVal:ResultAccessorValue
         {
-            return new ast.FunctionInvocationNode(fnName,extractOptional(params,1),location());
+            return new ast.FunctionInvocationNode(fnName,extractOptional(params,1),resultAccessorVal,location());
         }
+
+ResultAccessorValue
+    = val:("." [a-z]*)?
+      {
+          return val ? val[1].join('') : null
+      }
 
 PositionalParameters
     = head:Expression tail:(__ "," __ Expression)*

@@ -115,7 +115,12 @@ module.exports = function (ast) {
         if (prev.value === undefined) {
           return prev;
         }
-        return { value: prev.value[next.value], expression: `${prev.expression}.${next.nameNode.nameChars}` };
+
+        if (!Array.isArray(prev.value)) {
+          return { value: prev.value[next.value], expression: `${prev.expression}.${next.nameNode.nameChars}` };
+        }
+
+        return { value: prev.value.map((val) => val[next.value]), expression: `${prev.expression}.${next.nameNode.nameChars}` };
       }, { value: firstResult, expression: firstExpression });
 
     const firstResult = first.build(args);
@@ -241,6 +246,10 @@ module.exports = function (ast) {
     let result;
     if (fnNameResult !== undefined) {
       result = processFnMeta(fnNameResult);
+    }
+
+    if (this.resultAccessor) {
+      return Array.isArray(result) ? result.map((val) => val[this.resultAccessor]) : result[this.resultAccessor];
     }
     return result;
   };
