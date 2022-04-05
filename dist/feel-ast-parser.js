@@ -189,6 +189,22 @@ module.exports = function (ast) {
     return result;
   };
 
+  ast.FullArrayCheckInvocationNode.prototype.build = function(args) {
+    const checkFunction = (val) => {
+      args.context[this.iteratorName] = val
+      return this.expression.build(args);
+    }
+
+    let evaluatedList = this.list.build(args)
+    if (this.fnName === 'some') {
+      return evaluatedList.some(checkFunction)
+    }
+
+    if (this.fnName === 'every') {
+      return evaluatedList.every(checkFunction)
+    }
+  }
+
   // Invoking function defined as boxed expression in the context entry
   // See ast.FunctionDefinitionNode for details on declaring function
   // Function supports positional as well as named parameters

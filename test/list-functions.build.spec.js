@@ -42,16 +42,57 @@ describe(chalk.blue('Built-in list functions tests'), function() {
     expect(result).to.be.true;
   });
 
-  // // let asd = "[{\"fieldInObject\": [{\"abc\": \"foo\"}]}, {\"fieldInObject\": [{\"abc\": \"bar\"}]}]"
-  //
-  //     let a = [
-  //       {
-  //         'fieldInObject': [{ 'abc': 'foo' }]
-  //       },
-  //       {
-  //         'fieldInObject': [{ 'abc': 'bar' }]
-  //       }
-  //     ];
+  it('some function should works', function () {
+    let condition = 'some x in flatten(list.first).prop satisfies contains(x, element)';
+    let parsedGrammar = FEEL.parse(condition);
+    let result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }, { prop: 'baz' }] }, { first: [{ prop: 'bar' }] }], element: 'b' });
+    expect(result).to.be.true;
+    result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }, { prop: 'baz' }] }, { first: [{ prop: 'bar' }] }], element: 'foo' });
+    expect(result).to.be.true;
+
+    result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }, { prop: 'baz' }] }, { first: [{ prop: 'bar' }] }], element: 'чч' });
+    expect(result).to.be.false;
+
+    result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }] }], element: 'o' });
+    expect(result).to.be.true;
+
+    condition = 'some x in flatten(list.first) satisfies contains(x, element)';
+    parsedGrammar = FEEL.parse(condition);
+    result = parsedGrammar.build({ list: [{ first: [ 'foo'] }], element: 'o' });
+    expect(result).to.be.true;
+    result = parsedGrammar.build({ list: [{ first: [ '123'] }], element: 'o' });
+    expect(result).to.be.false;
+
+
+    condition = 'some x in list satisfies contains(x, element)';
+    parsedGrammar = FEEL.parse(condition);
+    result = parsedGrammar.build({ list:  [ 'foo', 'bar'], element: 'ar' });
+    expect(result).to.be.true;
+    result = parsedGrammar.build({ list:  [ 'foo', 'bar', 'baz'], element: '1r' });
+    expect(result).to.be.false;
+
+    condition = 'some x in list.prop satisfies contains(x, element)';
+    parsedGrammar = FEEL.parse(condition);
+    result = parsedGrammar.build({ list:  [ {prop: 'bar'}, {baz: 'bar'} ], element: 'ar' });
+    expect(result).to.be.true;
+    result = parsedGrammar.build({ list:  ['foo', 'bar', 'baz'], element: 'ar' });
+    expect(result).to.be.false;
+  });
+
+  it('every function should works', function () {
+    let condition = 'every x in flatten(list.first).prop satisfies contains(x, element)';
+    let parsedGrammar = FEEL.parse(condition);
+    let result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }, { prop: 'baz' }] }, { first: [{ prop: 'bar' }] }], element: 'b' });
+    expect(result).to.be.false;
+    result = parsedGrammar.build({ list: [{ first: [{ prop: 'foo' }, { prop: 'bao' }] }, { first: [{ prop: 'baro' }] }], element: 'o' });
+    expect(result).to.be.true;
+
+    condition = 'every x in flatten(list.first).prop satisfies ends with(x, "_end")';
+    parsedGrammar = FEEL.parse(condition);
+    result = parsedGrammar.build({ list: [{ first: [{ prop: "asd_end" }] }, { first: [{ prop: "321_end" }] }] });
+    expect(result).to.be.true;
+  })
+
   it('should support list contains function', function() {
       const condition = 'list contains(list, element)';
       const parsedGrammar = FEEL.parse(condition);

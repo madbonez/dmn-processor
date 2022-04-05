@@ -184,7 +184,20 @@ Endpoint
 SimpleValue
     = SimpleLiteral
     / FunctionInvocation
-	/ QualifiedName
+    / FullArrayCheckInvocation
+	  / QualifiedName
+
+FunctionInvocation
+    = fnName:QualifiedName __ "(" params:(__ (PositionalParameters))? __ ")" resultAccessorVal:ResultAccessorValue
+        {
+            return new ast.FunctionInvocationNode(fnName,extractOptional(params,1),resultAccessorVal,location());
+        }
+
+FullArrayCheckInvocation
+    = fnName:("some" / "every") __ iteratorName:[a-z] __ "in" __ list:SimpleValue __ "satisfies" __ expressions:SimpleValue
+        {
+            return new ast.FullArrayCheckInvocationNode(fnName,iteratorName,list,expressions,location());
+        }
 
 // 20.
 QualifiedName
@@ -395,6 +408,8 @@ Keyword
     / FalseToken
     / NullToken
     / NotToken
+    / "in" !NamePartChar
+    / "satisfies" !NamePartChar
 
 DateTimeKeyword
   = "date and time"               !NamePartChar
@@ -419,11 +434,7 @@ ComparisonOperator
     / $">" !"="
     / ">="
 
-FunctionInvocation
-    = fnName:QualifiedName __ "(" params:(__ (PositionalParameters))? __ ")" resultAccessorVal:ResultAccessorValue
-        {
-            return new ast.FunctionInvocationNode(fnName,extractOptional(params,1),resultAccessorVal,location());
-        }
+
 
 ResultAccessorValue
     = val:("." [a-z]*)?

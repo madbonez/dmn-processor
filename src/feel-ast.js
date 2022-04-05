@@ -5,6 +5,7 @@
 *
 */
 
+
 const ast = {};
 
 /* Begin AST Node Constructors */
@@ -103,6 +104,15 @@ function FunctionInvocationNode(fnName, params, resultAccessor, loc) {
   this.loc = loc;
 }
 
+function FullArrayCheckInvocationNode(fnName, iteratorName, list, expression, loc) {
+  this.type = 'FullArrayCheckInvocation';
+  this.fnName = fnName;
+  this.iteratorName = iteratorName;
+  this.list = list;
+  this.expression = expression;
+  this.loc = loc;
+}
+
 function PositionalParametersNode(params, loc) {
   this.type = 'PositionalParameters';
   this.params = params;
@@ -135,6 +145,7 @@ ast.LiteralNode = LiteralNode;
 ast.DateTimeLiteralNode = DateTimeLiteralNode;
 ast.DecimalNumberNode = DecimalNumberNode;
 ast.FunctionInvocationNode = FunctionInvocationNode;
+ast.FullArrayCheckInvocationNode = FullArrayCheckInvocationNode;
 ast.PositionalParametersNode = PositionalParametersNode;
 ast.ComparisonExpressionNode = ComparisonExpressionNode;
 
