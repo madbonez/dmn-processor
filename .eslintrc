@@ -10,6 +10,6 @@
         "no-useless-escape":"off",
         "no-prototype-builtins":"off",
         "no-underscore-dangle":"off",
-        "no-useless-catch": "off"
+        "prefer-object-spread":"off"
     }
 }

@@ -38,7 +38,7 @@ order, Rule order and Collect without operator, because the collect operator is 
 
 const _ = require('lodash');
 
-const getDistinct = (arr) => arr.filter((item, index, arr) => arr.indexOf(item) === index);
+const getDistinct = arr => arr.filter((item, index, arr) => arr.indexOf(item) === index);
 
 const sum = (arr) => {
   // const distinctArr = getDistinct(arr);
@@ -46,9 +46,9 @@ const sum = (arr) => {
   const elem = distinctArr[0];
   if (typeof elem === 'string') {
     return distinctArr.join(' ');
-  } if (typeof elem === 'number') {
+  } else if (typeof elem === 'number') {
     return distinctArr.reduce((a, b) => a + b, 0);
-  } if (typeof elem === 'boolean') {
+  } else if (typeof elem === 'boolean') {
     return distinctArr.reduce((a, b) => a && b, true);
   }
   throw new Error(`sum operation not supported for type ${typeof elem}`);
@@ -67,9 +67,9 @@ const min = (arr) => {
   if (typeof elem === 'string') {
     arr.sort();
     return arr[0];
-  } if (typeof elem === 'number') {
+  } else if (typeof elem === 'number') {
     return Math.min(...arr);
-  } if (typeof elem === 'boolean') {
+  } else if (typeof elem === 'boolean') {
     return arr.reduce((a, b) => a && b, true) ? 1 : 0;
   }
   throw new Error(`min operation not supported for type ${typeof elem}`);
@@ -80,9 +80,9 @@ const max = (arr) => {
   if (typeof elem === 'string') {
     arr.sort();
     return arr[arr.length - 1];
-  } if (typeof elem === 'number') {
+  } else if (typeof elem === 'number') {
     return Math.max(...arr);
-  } if (typeof elem === 'boolean') {
+  } else if (typeof elem === 'boolean') {
     return arr.reduce((a, b) => a || b, false) ? 1 : 0;
   }
   throw new Error(`max operation not supported for type ${typeof elem}`);
@@ -108,11 +108,12 @@ const checkEntriesEquality = (output) => {
   return isEqual;
 };
 
-const getValidationErrors = (output) => output.filter((ruleStatus) => ruleStatus.isValid === false).map((rule) => {
-  const newRule = rule;
-  delete newRule.isValid;
-  return newRule;
-});
+const getValidationErrors = output =>
+  output.filter(ruleStatus => ruleStatus.isValid === false).map((rule) => {
+    const newRule = rule;
+    delete newRule.isValid;
+    return newRule;
+  });
 
 const hitPolicyPass = (hitPolicy, output) => new Promise((resolve, reject) => {
   const policy = hitPolicy.charAt(0);
@@ -137,7 +138,7 @@ const hitPolicyPass = (hitPolicy, output) => new Promise((resolve, reject) => {
       if (operator.length > 0 && output.length > 0) {
         const fn = collectOperatorMap[operator];
         const key = Object.keys(output[0])[0];
-        const arr = output.map((item) => item[key]);
+        const arr = output.map(item => item[key]);
         const result = {};
         try {
           result[key] = fn(arr);
@@ -159,7 +160,7 @@ const hitPolicyPass = (hitPolicy, output) => new Promise((resolve, reject) => {
     case 'V':
       ruleOutput = getValidationErrors(output);
       break;
-    default:
+    default :
       ruleOutput = output;
   }
   resolve(ruleOutput);
@@ -173,8 +174,19 @@ const prepareOutputOrder = (output, priorityList) => {
     return obj;
   });
   const sortedPriorityList = _.sortBy(arr, ['priority']);
-  const outputList = sortedPriorityList.map((ruleObj) => ruleObj.rule);
+  const outputList = sortedPriorityList.map(ruleObj => ruleObj.rule);
   return outputList;
+};
+
+const ruleSorter = function (a, b) {
+  const left = parseInt(a.substr(4), 10);
+  const right = parseInt(b.substr(4), 10);
+  if (left < right) {
+    return -1;
+  } else if (left > right) {
+    return 1;
+  }
+  return 0;
 };
 
 const getOrderedOutput = (root, outputList) => {
@@ -188,12 +200,12 @@ const getOrderedOutput = (root, outputList) => {
       outputOrderedList = prepareOutputOrder(outputList, root.priorityList);
       break;
     case 'F':
-      outputOrderedList = outputList.sort().slice(0, 1);
+      outputOrderedList = outputList.sort(ruleSorter).slice(0, 1);
       break;
     case 'R':
-      outputOrderedList = outputList.sort();
+      outputOrderedList = outputList.sort(ruleSorter);
       break;
-    default:
+    default :
       outputOrderedList = outputList;
   }
   return outputOrderedList;

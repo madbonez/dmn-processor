@@ -7,13 +7,13 @@
     <decisionTable id="decisionTable" hitPolicy="FIRST">
       <input id="input1" label="Test date" camunda:inputVariable="">
         <inputExpression id="inputExpression1" typeRef="date">
-          <text>date(input.testDate)</text>
+          <text>date and time(input.testDate)</text>
         </inputExpression>
       </input>
       <output id="output1" label="Score" name="output.score" typeRef="integer" />
       <rule id="row-503089363-5">
         <inputEntry id="UnaryTests_0d1r8xq">
-          <text>[periodBegin .. periodBegin + periodDuration]</text>
+          <text>[periodBegin .. periodEnd]</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1468hty">
           <text>100</text>
@@ -45,17 +45,17 @@
         </inputExpression>
       </input>
       <output id="OutputClause_0cxgzjj" label="Begin of Period" name="periodBegin" typeRef="date" />
-      <output id="OutputClause_10wkfgy" label="Duration of Period" name="periodDuration" typeRef="date" />
+      <output id="OutputClause_10wkfgy" label="Duration of Period" name="periodEnd" typeRef="date" />
       <rule id="row-503089363-1">
         <description></description>
         <inputEntry id="UnaryTests_0rt9g4i">
           <text>"A", "B"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1ynxoo9">
-          <text>date(input.referenceDate)</text>
+          <text>date and time(input.referenceDate)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0pdkdse">
-          <text>duration("P1M")</text>
+          <text>date and time(input.referenceDate) + duration("P1M")</text>
         </outputEntry>
       </rule>
       <rule id="row-503089363-2">
@@ -64,10 +64,10 @@
           <text>"C"</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0qf7g0r">
-          <text>date(input.referenceDate)</text>
+          <text>date and time(input.referenceDate)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1002v8u">
-          <text>duration("P2M")</text>
+          <text>date and time(input.referenceDate) + duration("P2M")</text>
         </outputEntry>
       </rule>
       <rule id="row-503089363-3">
@@ -76,10 +76,10 @@
           <text>not("C", "D")</text>
         </inputEntry>
         <outputEntry id="LiteralExpression_0ygzepj">
-          <text>date(input.referenceDate)</text>
+          <text>date and time(input.referenceDate)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0n0wj3y">
-          <text>duration("P3M")</text>
+          <text>date and time(input.referenceDate) + duration("P3M")</text>
         </outputEntry>
       </rule>
       <rule id="row-503089363-4">
@@ -87,10 +87,10 @@
           <text></text>
         </inputEntry>
         <outputEntry id="LiteralExpression_1w58vcr">
-          <text>date(input.referenceDate)</text>
+          <text>date and time(input.referenceDate)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0wzpjef">
-          <text>duration("P4M")</text>
+          <text>date and time(input.referenceDate) + duration("P4M")</text>
         </outputEntry>
       </rule>
     </decisionTable>
