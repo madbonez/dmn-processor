@@ -55,7 +55,7 @@ function parseRule(rule, idx) {
 
 function parseDecisionLogic(decisionId, decisionLogic) {
   if ((decisionLogic.hitPolicy !== 'FIRST') && (decisionLogic.hitPolicy !== 'UNIQUE')
-      && (decisionLogic.hitPolicy !== 'COLLECT') && (decisionLogic.hitPolicy !== 'RULE ORDER')) {
+    && (decisionLogic.hitPolicy !== 'COLLECT') && (decisionLogic.hitPolicy !== 'RULE ORDER')) {
     throw new Error(`Unsupported hit policy ${decisionLogic.hitPolicy}`);
   }
   const parseddecisionLogic = {
@@ -209,11 +209,11 @@ function mergeContext(context, additionalContent, aggregate = false) {
   }
 }
 
-function evaluateRule(rule, resolvedInputExpressions, outputNames, context) {
+async function evaluateRule(rule, resolvedInputExpressions, outputNames, context) {
   for (let i = 0; i < rule.input.length; i += 1) {
     try {
       const { inputVariableName } = resolvedInputExpressions[i];
-      const inputFunction = rule.input[i].build({ _inputVariableName: inputVariableName, ...context }); // eslint-disable-line no-await-in-loop
+      const inputFunction = await rule.input[i].build({ _inputVariableName: inputVariableName, ...context }); // eslint-disable-line no-await-in-loop
       if (!inputFunction(resolvedInputExpressions[i].value)) {
         return {
           matched: false,
@@ -227,7 +227,7 @@ function evaluateRule(rule, resolvedInputExpressions, outputNames, context) {
   const outputObject = {};
   for (let i = 0; i < rule.output.length; i += 1) {
     if (rule.output[i] !== null) {
-      const outputValue = rule.output[i].build(context); // eslint-disable-line no-await-in-loop
+      const outputValue = await rule.output[i].build(context); // eslint-disable-line no-await-in-loop
       setOrAddValue(outputNames[i], outputObject, outputValue[0]);
     } else {
       setOrAddValue(outputNames[i], outputObject, undefined);
@@ -236,7 +236,7 @@ function evaluateRule(rule, resolvedInputExpressions, outputNames, context) {
   return { matched: true, output: outputObject };
 }
 
-function evaluateDecision(decisionId, decisions, context, alreadyEvaluatedDecisions) {
+async function evaluateDecision(decisionId, decisions, context, alreadyEvaluatedDecisions) {
   if (!alreadyEvaluatedDecisions) {
     alreadyEvaluatedDecisions = []; // eslint-disable-line no-param-reassign
   }
@@ -251,7 +251,7 @@ function evaluateDecision(decisionId, decisions, context, alreadyEvaluatedDecisi
     // check if the decision was already executed, to prevent unecessary evaluations if multiple decisions require the same decision
     if (!alreadyEvaluatedDecisions[reqDecision]) {
       logger.debug(`Need to evaluate required decision ${reqDecision}`);
-      const requiredResult = evaluateDecision(reqDecision, decisions, context, alreadyEvaluatedDecisions); // eslint-disable-line no-await-in-loop
+      const requiredResult = await evaluateDecision(reqDecision, decisions, context, alreadyEvaluatedDecisions); // eslint-disable-line no-await-in-loop
       mergeContext(context, requiredResult);
       alreadyEvaluatedDecisions[reqDecision] = true; // eslint-disable-line no-param-reassign
     }
@@ -266,7 +266,7 @@ function evaluateDecision(decisionId, decisions, context, alreadyEvaluatedDecisi
     const parsedInputExpression = decisionLogic.parsedInputExpressions[i];
     const plainInputExpression = decisionLogic.inputExpressions[i];
     try {
-      const resolvedInputExpression = parsedInputExpression.build(context); // eslint-disable-line no-await-in-loop
+      const resolvedInputExpression = await parsedInputExpression.build(context); // eslint-disable-line no-await-in-loop
       // check if the input expression is to be treated as an input variable - this is the case if it is a qualified name
       let inputVariableName;
       if (parsedInputExpression.simpleExpressions && parsedInputExpression.simpleExpressions[0].type === 'QualifiedName') {
@@ -294,7 +294,7 @@ function evaluateDecision(decisionId, decisions, context, alreadyEvaluatedDecisi
     const rule = decisionLogic.rules[i];
     let ruleResult;
     try {
-      ruleResult = evaluateRule(rule, resolvedInputExpressions, decisionLogic.outputNames, context); // eslint-disable-line no-await-in-loop
+      ruleResult = await evaluateRule(rule, resolvedInputExpressions, decisionLogic.outputNames, context); // eslint-disable-line no-await-in-loop
     } catch (err) {
       throw new Error(`Failed to evaluate rule ${rule.number} of decision ${decisionId}:  ${err}`);
     }

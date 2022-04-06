@@ -7,12 +7,12 @@
     <decisionTable id="decisionTable" hitPolicy="FIRST">
       <input id="input1" label="Required 1" camunda:inputVariable="">
         <inputExpression id="inputExpression1" typeRef="integer">
-          <text>output1.length</text>
+          <text>count(output1)</text>
         </inputExpression>
       </input>
       <input id="InputClause_0x9t74d" label="Required 2" camunda:inputVariable="">
         <inputExpression id="LiteralExpression_1xqnf9t" typeRef="integer">
-          <text>output2.nested.length</text>
+          <text>count(output2.nested)</text>
         </inputExpression>
       </input>
       <output id="output1" label="Score" name="output.score" typeRef="integer" />
